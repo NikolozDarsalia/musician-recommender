@@ -5,7 +5,12 @@ description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
+    "duckdb>=1.4.1",
+    "matplotlib>=3.10.7",
     "pandas>=2.3.3",
+    "pyarrow>=22.0.0",
+    "rapidfuzz>=3.14.3",
+    "unidecode>=1.4.0",
 ]
 
 [dependency-groups]
