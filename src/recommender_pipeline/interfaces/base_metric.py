@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 
+
 class BaseMetric(ABC):
     @abstractmethod
-    def compute(self, model, interactions, k: int):
+    def compute(self, model, interactions_df, k: int):
         raise NotImplementedError
