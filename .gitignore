@@ -16,7 +16,9 @@ wheels/
 .vscode/
 
 # Data files
-data/*.parquet
+data/extracted.parquet
+data/spotify_combined.parquet
+data/spotify.parquet
 data/*.csv
 data/*.dat
 data/*.db
