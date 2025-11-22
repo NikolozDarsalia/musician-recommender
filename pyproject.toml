@@ -8,6 +8,7 @@ dependencies = [
     "duckdb>=1.4.1",
     "lightfm",
     "matplotlib>=3.10.7",
+    "optuna>=4.6.0",
     "pandas>=2.3.3",
     "pyarrow>=22.0.0",
     "rapidfuzz>=3.14.3",
