@@ -10,7 +10,7 @@ class BaseLoader(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    def train_test_split(self) -> Tuple[pd.DataFrame, pd.DataFrame]:
+    def train_test_val_split(self) -> Tuple[pd.DataFrame, pd.DataFrame]:
         """Train-test split for interaction's dataframe
         VALID ONLY FOR INTERACTION'S DATAFRAME!"""
         raise NotImplementedError
