@@ -19,6 +19,7 @@ wheels/
 data/extracted.parquet
 data/spotify_combined.parquet
 data/spotify.parquet
+data/spotify_musics.parquet
 data/*.csv
 data/*.dat
 data/*.db
