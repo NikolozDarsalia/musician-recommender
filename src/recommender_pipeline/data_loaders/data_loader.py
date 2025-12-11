@@ -1,4 +1,4 @@
-from interfaces.base_loader import BaseLoader
+from ..interfaces.base_loader import BaseLoader
 import pandas as pd
 from typing import Tuple
 from sklearn.model_selection import train_test_split
