@@ -1,6 +1,7 @@
 from typing import Callable, Dict, Iterable, List, Optional, Sequence, Union
 
 import pandas as pd
+import numpy as np
 
 from ..interfaces.base_feature_generator import BaseFeatureGenerator
 
