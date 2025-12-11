@@ -1,6 +1,6 @@
 import pandas as pd
 from abc import ABC, abstractmethod
-from types import Tuple
+from typing import Tuple
 
 
 class BaseLoader(ABC):
