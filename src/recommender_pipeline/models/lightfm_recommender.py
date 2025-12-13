@@ -1,7 +1,7 @@
 import os
 import joblib
 import numpy as np
-from interfaces.base_recommender import BaseRecommender
+from ..interfaces.base_recommender import BaseRecommender
 from lightfm import LightFM
 
 

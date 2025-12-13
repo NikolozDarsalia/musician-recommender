@@ -1,4 +1,4 @@
-from interfaces.base_metric import BaseMetric
+from ..interfaces.base_metric import BaseMetric
 import numpy as np
 
 
