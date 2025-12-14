@@ -1,4 +1,4 @@
-from ..interfaces.base_loader import BaseLoader
+from .interfaces.base_loader import BaseLoader
 import pandas as pd
 from typing import Tuple
 from sklearn.model_selection import train_test_split
@@ -20,6 +20,8 @@ class StandardLoader(BaseLoader):
             df = pd.read_csv(self.folder_path, sep="\t", encoding="latin1")
         elif file_format == "parquet":
             df = pd.read_parquet(self.folder_path)
+        elif file_format == "pickle" or file_format == "pkl":
+            df = pd.read_pickle(self.folder_path)
         else:
             raise Exception(f"Unsupported file format - {file_format}")
 
