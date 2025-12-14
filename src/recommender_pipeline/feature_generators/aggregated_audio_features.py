@@ -1,7 +1,6 @@
 from typing import Callable, Dict, Iterable, List, Optional, Sequence, Union
 
 import pandas as pd
-import numpy as np
 
 from ..interfaces.base_feature_generator import BaseFeatureGenerator
 
@@ -59,18 +58,25 @@ class AggregatedAudioGenerator(BaseFeatureGenerator):
             raise ValueError("No feature columns available for aggregation.")
 
         grouped = X.groupby(self.groupby_col)
-        agg_dict: Dict[str, Sequence[AggFunc]] = {col: self.agg_funcs for col in feature_cols}
+        agg_dict: Dict[str, Sequence[AggFunc]] = {
+            col: self.agg_funcs for col in feature_cols
+        }
 
         agg_df = grouped.agg(agg_dict)
         agg_df.columns = [
-            self._format_agg_column(col_name, agg_name) for col_name, agg_name in agg_df.columns
+            self._format_agg_column(col_name, agg_name)
+            for col_name, agg_name in agg_df.columns
         ]
 
         agg_df[self.track_count_col] = grouped.size()
 
         if self.genre_col and self.genre_col in X.columns:
-            agg_df[f"{self.genre_col}_top"] = grouped[self.genre_col].agg(self._mode_safe)
-            agg_df[f"{self.genre_col}_n_unique"] = grouped[self.genre_col].nunique(dropna=True)
+            agg_df[f"{self.genre_col}_top"] = grouped[self.genre_col].agg(
+                self._mode_safe
+            )
+            agg_df[f"{self.genre_col}_n_unique"] = grouped[self.genre_col].nunique(
+                dropna=True
+            )
 
         return agg_df.reset_index()
 
@@ -78,11 +84,15 @@ class AggregatedAudioGenerator(BaseFeatureGenerator):
         if self.feature_cols is not None:
             missing = set(self.feature_cols) - set(X.columns)
             if missing:
-                raise KeyError(f"Feature columns not found in DataFrame: {sorted(missing)}")
+                raise KeyError(
+                    f"Feature columns not found in DataFrame: {sorted(missing)}"
+                )
             return list(self.feature_cols)
 
         drop_cols = [c for c in [self.groupby_col, self.genre_col] if c in X.columns]
-        numeric_cols = X.drop(columns=drop_cols).select_dtypes(include=["number"]).columns
+        numeric_cols = (
+            X.drop(columns=drop_cols).select_dtypes(include=["number"]).columns
+        )
         return [col for col in numeric_cols if not str(col).startswith("__")]
 
     @staticmethod
