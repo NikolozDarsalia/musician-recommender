@@ -3,17 +3,25 @@ from lightfm.data import Dataset
 from .interfaces.base_matrix_builder import BaseDatasetBuilder
 
 class DatasetBuilder(BaseDatasetBuilder):
-    def __init__(self):
+    def __init__(self, item_identity_features=True, user_identity_features=True):
         """
         Initialize the MatrixBuilder.
 
-        This constructor sets up the MatrixBuilder instance for subsequent
-        matrix construction operations. Data should be provided via the fit() method.
+        Parameters
+        ----------
+        item_identity_features : bool, default=True
+            Whether to add identity features for items (one feature per item).
+            True = hybrid model (content + collaborative), False = pure content-based.
+        user_identity_features : bool, default=True
+            Whether to add identity features for users.
         """
         self.interactions_df = None
         self.user_features_df = None
         self.item_features_df = None
-        self.dataset = Dataset()
+        self.dataset = Dataset(
+            item_identity_features=item_identity_features,
+            user_identity_features=user_identity_features
+        )
         
     def fit(self, interactions_df, user_features_df=None, item_features_df=None):
         """
@@ -54,12 +62,81 @@ class DatasetBuilder(BaseDatasetBuilder):
         
         item_features = []
         if item_features_df is not None:
-            item_features = item_features_df.iloc[:, 1].unique()  # Second column: feature
+            # Register all feature column names (all columns except the first which is item_id)
+            item_features = list(item_features_df.columns[1:])
+            # Add the no_features flag as a possible feature
+            item_features.append('no_features')
         
         # Fit the LightFM dataset
         self.dataset.fit(users=users, items=items,
                          user_features=user_features,
                          item_features=item_features)
+    
+    def _build_user_features(self, normalize_features=True):
+        """
+        Build user features matrix.
+        
+        Parameters
+        ----------
+        normalize_features : bool, optional
+            Whether to normalize feature matrices. Default is True.
+            
+        Returns
+        -------
+        user_features : scipy.sparse matrix or None
+            User features matrix.
+        """
+        user_features = None
+        if self.user_features_df is not None:
+            user_features = self.dataset.build_user_features(
+                [(row[0], [row[1]]) for row in self.user_features_df.itertuples(index=False)],
+                normalize=normalize_features
+            )
+        return user_features
+    
+    def _build_item_features(self, normalize_features=True):
+        """
+        Build item features matrix.
+        
+        Parameters
+        ----------
+        normalize_features : bool, optional
+            Whether to normalize feature matrices. Default is True.
+            
+        Returns
+        -------
+        item_features : scipy.sparse matrix or None
+            Item features matrix.
+        """
+        item_features = None
+        if self.item_features_df is not None:
+            # For numeric features, create feature dictionaries
+            feature_data = []
+            feature_columns = self.item_features_df.columns[1:]  # All columns except first (item_id)
+            
+            for row in self.item_features_df.itertuples(index=False):
+                item_id = row[0]
+                feature_dict = {}
+                has_valid_features = False
+                
+                # Check each feature for validity (not NaN, not zero)
+                for i, col in enumerate(feature_columns):
+                    value = row[i+1]
+                    if pd.notna(value) and value != 0:
+                        feature_dict[col] = value
+                        has_valid_features = True
+                
+                # Add no_features flag for items without valid features
+                if not has_valid_features:
+                    feature_dict['no_features'] = 1.0
+                
+                feature_data.append((item_id, feature_dict))
+            
+            item_features = self.dataset.build_item_features(
+                feature_data,
+                normalize=normalize_features
+            )
+        return item_features
     
     def build_matrices(self, normalize_features=True):
         """
@@ -70,7 +147,7 @@ class DatasetBuilder(BaseDatasetBuilder):
         normalize_features : bool, optional
             Whether to normalize feature matrices. Default is True.
         """
-        # Interactions - expect columns: [user_id, item_id] or [user_id, item_id, weight]
+        # Build interactions - expect columns: [user_id, item_id] or [user_id, item_id, weight]
         if self.interactions_df.shape[1] >= 3:
             # Has weight column
             interactions, weights = self.dataset.build_interactions(
@@ -82,20 +159,8 @@ class DatasetBuilder(BaseDatasetBuilder):
                 [(row[0], row[1]) for row in self.interactions_df.itertuples(index=False)]
             )
         
-        # User features - expect columns: [user_id, feature, ...]
-        user_features = None
-        if self.user_features_df is not None:
-            user_features = self.dataset.build_user_features(
-                [(row[0], [row[1]]) for row in self.user_features_df.itertuples(index=False)],
-                normalize=normalize_features
-            )
-        
-        # Item features - expect columns: [item_id, feature, ...]
-        item_features = None
-        if self.item_features_df is not None:
-            item_features = self.dataset.build_item_features(
-                [(row[0], [row[1]]) for row in self.item_features_df.itertuples(index=False)],
-                normalize=normalize_features
-            )
+        # Build user and item features using modular methods
+        user_features = self._build_user_features(normalize_features)
+        item_features = self._build_item_features(normalize_features)
         
         return interactions, weights, user_features, item_features
