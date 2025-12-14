@@ -1,27 +1,10 @@
-from abc import ABC, abstractmethod
+from sklearn.pipeline import Pipeline as skPipeline
+from sklearn.base import BaseEstimator
 
-
-class BasePipeline(ABC):
-    @abstractmethod
-    def load_data(self, paths_dict: dict):
-        """
-        paths_dict example - {'interactions' : 'user_artists.dat',
-                              'items_meta' : 'artists_spotify_matched.parquet'}
-        """
-        raise NotImplementedError
-
-    @abstractmethod
-    def run(self):
-        raise NotImplementedError
-
-    @abstractmethod
-    def add_step(self, step, position=None):
-        raise NotImplementedError
-
-    @abstractmethod
-    def remove_step(self, step_name):
-        raise NotImplementedError
-
-    @abstractmethod
-    def replace_step(self, step_name, new_step):
-        raise NotImplementedError
+class Pipeline(skPipeline, BaseEstimator):
+    """
+    BasePipeline extends sklearn's Pipeline for custom pipeline logic.
+    Inherits all functionality from sklearn.pipeline.Pipeline.
+    """
+    def __init__(self, steps, memory=None, verbose=False):
+        super().__init__(steps=steps, memory=memory, verbose=verbose)
