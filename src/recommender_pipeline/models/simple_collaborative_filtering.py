@@ -2,7 +2,7 @@ import os
 import joblib
 import numpy as np
 from sklearn.decomposition import TruncatedSVD
-from interfaces.base_recommender import BaseRecommender
+from ..interfaces.base_recommender import BaseRecommender
 
 
 class CollaborativeFilteringRecommender(BaseRecommender):
