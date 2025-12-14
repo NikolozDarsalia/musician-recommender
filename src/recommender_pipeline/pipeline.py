@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 from recommender_pipeline.interfaces.base_pipeline import BasePipeline
 from recommender_pipeline.data_loaders.data_loader import StandardLoader
 from data_loaders import artist_match
@@ -94,3 +95,6 @@ class RecommenderPipeline(BasePipeline):
             score_cutoff=self.levenshtein_score_cutoff,
         )
         return df
+=======
+from sklearn.pipeline import Pipeline
+>>>>>>> main
