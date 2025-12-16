@@ -14,7 +14,7 @@ def test_interaction_matrix_builder():
         {
             "userID": ["u1", "u1", "u2", "u2"],
             "artistID": ["a1", "a2", "a1", "a3"],
-            "scaled_listenings": [0.8, 0.6, 0.9, 0.7],
+            "weight": [0.8, 0.6, 0.9, 0.7],
         }
     )
 
@@ -22,13 +22,11 @@ def test_interaction_matrix_builder():
         {
             "userID": ["u1", "u2"],
             "artistID": ["a3", "a2"],
-            "scaled_listenings": [0.5, 0.4],
+            "weight": [0.5, 0.4],
         }
     )
 
-    val_data = pd.DataFrame(
-        {"userID": ["u1"], "artistID": ["a2"], "scaled_listenings": [0.3]}
-    )
+    val_data = pd.DataFrame({"userID": ["u1"], "artistID": ["a2"], "weight": [0.3]})
 
     # Build matrices
     builder = InteractionMatrixBuilder()
@@ -59,7 +57,7 @@ def test_cold_start_user():
         {
             "userID": ["u1", "u1"],
             "artistID": ["a1", "a2"],
-            "scaled_listenings": [0.8, 0.6],
+            "weight": [0.8, 0.6],
         }
     )
 
@@ -67,9 +65,7 @@ def test_cold_start_user():
     builder.fit(train_data, train_data, train_data)
 
     # Simulate new user survey
-    new_user_survey = pd.DataFrame(
-        {"artistID": ["a1", "a2"], "scaled_listenings": [0.9, 0.7]}
-    )
+    new_user_survey = pd.DataFrame({"artistID": ["a1", "a2"], "weight": [0.9, 0.7]})
 
     # Create interaction vector for new user
     new_user_vector = builder.add_new_user_interactions("u_new", new_user_survey)

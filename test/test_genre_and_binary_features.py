@@ -12,16 +12,15 @@ def test_genre_and_tag_combined():
     df = pd.DataFrame(
         {
             "track_genre": ["rock"],
-            "aggregated_tags": ["british|indie"],
+            "artist_tags": ["british|indie"],
         }
     )
 
     combiner = GenreTagCombiner()
     out = combiner.transform(df)
-
-    assert "genre_tag_text" in out.columns
-    assert "rock" in out["genre_tag_text"].iloc[0]
-    assert "british" in out["genre_tag_text"].iloc[0]
+    assert "tag_genre_text" in out.columns
+    assert "rock" in out["tag_genre_text"].iloc[0]
+    assert "british" in out["tag_genre_text"].iloc[0]
 
 
 def test_binary_features_created():
