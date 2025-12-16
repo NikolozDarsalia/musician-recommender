@@ -15,7 +15,9 @@ wheels/
 # VSCode settings
 .vscode/
 
+
 # Data files
+*.parquet
 data/extracted.parquet
 data/spotify_combined.parquet
 data/spotify.parquet
@@ -25,9 +27,13 @@ data/artists_spotify_matched.parquet
 data/lastfm_unified_artists.parquet
 notebooks/artist_popularity.parquet
 
+
 data/*.csv
 # data/*.dat
 data/*.db
+
+# models
+*.pkl
 
 # Logs
 logs/*.log
