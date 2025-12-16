@@ -5,6 +5,7 @@ import pandas as pd
 from rapidfuzz import process as _rf_process
 from rapidfuzz import fuzz as _rf_fuzz
 
+
 def _normalize(name: Any) -> str:
     """advanced normalization for artist names: lower, strip, remove punctuation and extra spaces."""
     if name is None or (isinstance(name, float) and pd.isna(name)):
@@ -25,11 +26,12 @@ def _normalize_simple(name: Any) -> str:
     return s
 
 
-def _best_match(query: str, 
-                choices: Iterable[str], 
-                scorer=_rf_fuzz.ratio, 
-                score_cutoff: int = 0) -> Optional[Tuple[str, int]]:
-    res = _rf_process.extractOne(query, choices, scorer=scorer, score_cutoff=score_cutoff)
+def _best_match(
+    query: str, choices: Iterable[str], scorer=_rf_fuzz.ratio, score_cutoff: int = 0
+) -> Optional[Tuple[str, int]]:
+    res = _rf_process.extractOne(
+        query, choices, scorer=scorer, score_cutoff=score_cutoff
+    )
     # rapidfuzz returns (choice, score, index) or None
     if res:
         return res[0], int(res[1])
