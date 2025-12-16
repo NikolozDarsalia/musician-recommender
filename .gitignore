@@ -19,7 +19,7 @@ wheels/
 
 # Data files
 *.parquet
-
+*.jpg
 
 data/*.csv
 # data/*.dat

@@ -28,6 +28,8 @@ dependencies = [
     "uvicorn>=0.38.0",
     "pydantic>=2.12.5",
     "python-multipart>=0.0.20",
+    "streamlit>=1.52.1",
+    "streamlit-sortables>=0.3.1",
 ]
 
 [project.optional-dependencies]
