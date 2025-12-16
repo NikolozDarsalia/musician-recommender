@@ -17,15 +17,7 @@ wheels/
 
 
 # Data files
-data/*.parquet
-data/extracted.parquet
-data/spotify_combined.parquet
-data/spotify.parquet
-data/spotify_musics.parquet
-data/artists_spotify_matched_raw.parquet
-data/artists_spotify_matched.parquet
-data/lastfm_unified_artists.parquet
-notebooks/artist_popularity.parquet
+*.parquet
 
 
 data/*.csv
