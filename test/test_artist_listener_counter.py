@@ -15,8 +15,8 @@ def test_artist_listener_counter_counts_unique_users():
     counter = ArtistListenerCounter()
     result = counter.transform(interactions)
 
-    a1_listeners = result.loc[result["userID"] == "a1", "n_listeners"].iloc[0]
-    a2_listeners = result.loc[result["artistID"] == "a2", "n_listeners"].iloc[0]
+    a1_listeners = result.loc[result["artistID"] == "a1", "num_listeners"].iloc[0]
+    a2_listeners = result.loc[result["artistID"] == "a2", "num_listeners"].iloc[0]
 
     assert a1_listeners == 2
     assert a2_listeners == 1

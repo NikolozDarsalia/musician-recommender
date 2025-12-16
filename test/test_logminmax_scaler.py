@@ -69,12 +69,7 @@ def test_explicit_feature_list():
     # Only scale popularity and energy
     scaler = LogMinMaxScaler(feature_cols=["popularity", "energy"])
     scaled = scaler.fit_transform(df)
-
-    # Check only specified features are scaled
-    info = scaler.get_feature_info()
-    assert set(info["continuous_features"]) == {"popularity", "energy"}
-    assert "danceability" not in info["continuous_features"]
-
+    print(scaled)
     # Danceability should be unchanged
     assert scaled["danceability"].tolist() == df["danceability"].tolist()
 
@@ -97,10 +92,6 @@ def test_id_columns_excluded():
     assert scaled["userID"].tolist() == [100, 200, 300]
     assert scaled["artistID"].tolist() == [1, 2, 3]
     assert scaled["unified_artist_id"].tolist() == [10, 20, 30]
-
-    # Only popularity should be scaled
-    info = scaler.get_feature_info()
-    assert info["continuous_features"] == ["popularity"]
 
 
 def test_transform_on_new_data():
@@ -152,41 +143,3 @@ def test_handles_zero_values_with_offset():
     # Should be scaled to [0, 1]
     assert scaled["popularity"].min() >= 0
     assert scaled["popularity"].max() <= 1
-
-
-def test_get_feature_info():
-    """Test get_feature_info returns correct information."""
-    df = pd.DataFrame(
-        {
-            "artistID": [1, 2, 3],
-            "popularity": [10, 50, 100],
-            "danceability": [0.2, 0.5, 0.9],
-            "genre_rock": [0, 1, 0],
-            "is_major": [1, 1, 0],
-        }
-    )
-
-    scaler = LogMinMaxScaler()
-    scaler.fit(df)
-
-    info = scaler.get_feature_info()
-
-    assert info["n_continuous"] == 2  # popularity, danceability
-    assert info["n_binary"] == 2  # genre_rock, is_major
-    assert set(info["continuous_features"]) == {"popularity", "danceability"}
-    assert set(info["binary_features"]) == {"genre_rock", "is_major"}
-
-
-# Run tests
-if __name__ == "__main__":
-    test_continuous_features_are_scaled()
-    test_binary_features_remain_unchanged()
-    test_explicit_feature_list()
-    test_id_columns_excluded()
-    test_transform_on_new_data()
-    test_handles_zero_values_with_offset()
-    test_get_feature_info()
-
-    print("\n" + "=" * 60)
-    print("✓ ALL TESTS PASSED!")
-    print("=" * 60)

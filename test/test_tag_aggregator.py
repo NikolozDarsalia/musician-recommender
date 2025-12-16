@@ -13,10 +13,10 @@ def test_tag_aggregator_artist_level():
         }
     )
 
-    agg = TagAggregator(group_by="artistID", tag_col="tag")
+    agg = TagAggregator(group_by="artistID", tag_col="tagValue")
     result = agg.transform(df)
 
-    a1_tags = result.loc[result["artistID"] == "a1", "artist_tags"].iloc[0]
+    a1_tags = result.loc[result["artistID"] == "a1", "aggregated_tags"].iloc[0]
 
     assert "rock" in a1_tags
     assert "indie" in a1_tags
@@ -35,4 +35,4 @@ def test_tag_aggregator_deduplicates_tags():
     agg = TagAggregator(group_by="artistID")
     result = agg.transform(df)
 
-    assert result["artist_tags"].iloc[0] == "rock"
+    assert result["aggregated_tags"].iloc[0] == "rock"
