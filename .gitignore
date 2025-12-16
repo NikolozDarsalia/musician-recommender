@@ -5,6 +5,7 @@ build/
 dist/
 wheels/
 *.egg-info
+.pytest_cache
 
 # Virtual environments
 .venv
@@ -32,3 +33,4 @@ logs/*.log
 
 # MacOS files
 .DS_Store
+
