@@ -7,7 +7,7 @@ from sklearn.model_selection import train_test_split
 class StandardLoader(BaseLoader):
     """Loader for all dataset"""
 
-    def __init__(self, folder_path: str):
+    def __init__(self, folder_path: str = None):
         self.folder_path = folder_path
 
     def load(self) -> pd.DataFrame:
@@ -57,25 +57,50 @@ class StandardLoader(BaseLoader):
         )
         return train, val, test
 
-    def _user_stratified(self, df, test_size, val_size, random_state):
-        # ensures each user appears in all splits
+    def _user_stratified(self, df, test_size=0.2, val_size=0.1, random_state=42):
+        """
+        Stratified split by userID, with safeguards for users with few interactions.
+        Ensures each user appears in train/val/test if possible, otherwise falls back gracefully.
+        """
         users = df["userID"].unique()
         train_parts, val_parts, test_parts = [], [], []
 
         for u in users:
             subset = df[df["userID"] == u]
+
+            # If user has fewer than 3 interactions, put all in train
+            if len(subset) < 3:
+                train_parts.append(subset)
+                continue
+
             # First split off test
-            train_val_u, test_u = train_test_split(
-                subset, test_size=test_size, random_state=random_state
-            )
+            try:
+                train_val_u, test_u = train_test_split(
+                    subset, test_size=test_size, random_state=random_state
+                )
+            except ValueError:
+                # Not enough samples → put all in train
+                train_parts.append(subset)
+                continue
+
             # Then split train_val into train and val
-            train_u, val_u = train_test_split(
-                train_val_u,
-                test_size=val_size / (1 - test_size),
-                random_state=random_state,
-            )
+            try:
+                train_u, val_u = train_test_split(
+                    train_val_u,
+                    test_size=val_size / (1 - test_size),
+                    random_state=random_state,
+                )
+            except ValueError:
+                # Not enough samples → put all in train
+                train_u, val_u = train_val_u, pd.DataFrame()
+
             train_parts.append(train_u)
             val_parts.append(val_u)
             test_parts.append(test_u)
 
-        return pd.concat(train_parts), pd.concat(val_parts), pd.concat(test_parts)
+        # Concatenate safely (skip empty lists)
+        train_df = pd.concat(train_parts) if train_parts else pd.DataFrame()
+        val_df = pd.concat(val_parts) if val_parts else pd.DataFrame()
+        test_df = pd.concat(test_parts) if test_parts else pd.DataFrame()
+
+        return train_df, val_df, test_df
