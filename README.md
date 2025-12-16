@@ -31,6 +31,11 @@ Compact, modular pipeline and API for musician-level recommendations. This proje
 - `test/` — unit tests
 
 ## Detailed pipeline steps
+0) Exploratory data analysis
+   
+   This process is independent of the pipeline below and can be run with any dataset. The process can perform general data exploration such as dataset overview, categorical analysis, correlation analysis, distribution analysis, and missing values analysis. An HTML report can also be produced. 
+
+   Each analysis is a method under the EDA class. To contribute, new methods can be added. 
 
 1) General preprocessing
 
