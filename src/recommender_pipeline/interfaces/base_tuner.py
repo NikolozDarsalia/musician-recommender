@@ -1,34 +1,64 @@
 from abc import ABC, abstractmethod
-from sklearn.base import BaseEstimator
+from typing import List, Optional, Any
 
 
-class BaseTuner(ABC, BaseEstimator):
+class BaseTuner(ABC):
     """
-    Abstract base class for hyperparameter tuners compatible with scikit-learn pipelines.
-    Designed for recommenders (e.g., LightFM).
+    Interface for hyperparameter optimization tuners.
+    Defines the contract that all tuner implementations must follow.
     """
 
     @abstractmethod
-    def optimize(self, train, val, user_features=None, item_features=None):
+    def objective(self, trial: Any, metrics: List) -> float:
         """
-        Run hyperparameter optimization (e.g., with Optuna).
-        Must set self.best_params_ and self.best_model_.
-        """
-        raise NotImplementedError
+        Objective function for optimization.
 
-    def fit(self, train, y=None, user_features=None, item_features=None):
-        """
-        Fit by running optimization and storing the best model.
-        """
-        self.optimize(
-            train, val=None, user_features=user_features, item_features=item_features
-        )
-        return self
+        Args:
+            trial: Optimization trial object (e.g., Optuna Trial)
+            metrics: List of metric objects for evaluation
 
-    def predict(self, user_ids, item_ids):
+        Returns:
+            Optimization metric score
         """
-        Delegate prediction to the tuned model.
+        pass
+
+    @abstractmethod
+    def optimize(
+        self,
+        metrics: List,
+        n_trials: int = 50,
+        timeout: Optional[int] = None,
+        n_jobs: int = 1,
+        show_progress_bar: bool = True,
+    ) -> Any:
         """
-        if self.best_model_ is None:
-            raise RuntimeError("Model not optimized yet. Call fit() first.")
-        return self.best_model_.predict(user_ids, item_ids)
+        Run hyperparameter optimization.
+
+        Args:
+            metrics: List of metric objects
+            n_trials: Number of optimization trials
+            timeout: Time limit in seconds (optional)
+            n_jobs: Number of parallel jobs
+            show_progress_bar: Whether to show progress bar
+
+        Returns:
+            Best trained model
+        """
+        pass
+
+    @abstractmethod
+    def save_best_model(self, path: str):
+        """
+        Save the best model to disk.
+
+        Args:
+            path: File path to save the model
+        """
+        pass
+
+    @abstractmethod
+    def plot_optimization_history(self):
+        """
+        Plot optimization history using the optimizer's visualization tools.
+        """
+        pass
