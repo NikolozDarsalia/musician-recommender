@@ -17,7 +17,7 @@ wheels/
 
 
 # Data files
-*.parquet
+data/*.parquet
 data/extracted.parquet
 data/spotify_combined.parquet
 data/spotify.parquet
