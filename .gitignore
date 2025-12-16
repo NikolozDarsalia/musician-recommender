@@ -15,14 +15,17 @@ wheels/
 # VSCode settings
 .vscode/
 
+
 # Data files
-data/extracted.parquet
-data/spotify_combined.parquet
-data/spotify.parquet
-data/spotify_musics.parquet
+*.parquet
+
+
 data/*.csv
-data/*.dat
+# data/*.dat
 data/*.db
+
+# models
+*.pkl
 
 # Logs
 logs/*.log
